@@ -203,16 +203,14 @@ if uploaded_file is not None:
     sorted_probs = sorted(
         result["all_probabilities"].items(), key=lambda kv: kv[1], reverse=True
     )
-    bars_html = ""
-    for i, (cls, prob) in enumerate(sorted_probs):
-        fill_class = "top" if i == 0 else ""
-        bars_html += f"""
-        <div class="bar-row">
-            <div class="bar-label">{cls.capitalize()}</div>
-            <div class="bar-track"><div class="bar-fill {fill_class}" style="width:{prob*100:.1f}%;"></div></div>
-            <div class="bar-pct">{prob*100:.1f}%</div>
-        </div>
-        """
+    bars_html = "".join([
+        f'<div class="bar-row">'
+        f'<div class="bar-label">{cls.capitalize()}</div>'
+        f'<div class="bar-track"><div class="bar-fill {"top" if i == 0 else ""}" style="width:{prob*100:.1f}%;"></div></div>'
+        f'<div class="bar-pct">{prob*100:.1f}%</div>'
+        f'</div>'
+        for i, (cls, prob) in enumerate(sorted_probs)
+    ])
 
     with col2:
         st.markdown(
