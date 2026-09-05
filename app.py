@@ -1,19 +1,3 @@
-"""
-Streamlit app — Scene Atlas (Natural Scene Image Classifier)
-Computer Vision Project: Multi-Class Image Classification
-(buildings, forest, glacier, mountain, sea, street)
-
-Run locally:
-    pip install streamlit tensorflow pillow numpy requests
-    streamlit run app.py
-
-Deploy on Streamlit Community Cloud:
-    1. Push this file + requirements.txt + .streamlit/config.toml to a GitHub repo
-       (final_model.keras itself does NOT need to be in the repo — it's downloaded
-       automatically at startup from MODEL_URL below).
-    2. Go to https://share.streamlit.io, connect the repo, set app.py as the entry point.
-"""
-
 import os
 import numpy as np
 import requests
