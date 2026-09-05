@@ -33,10 +33,10 @@ CLASS_NAMES = ["buildings", "forest", "glacier", "mountain", "sea", "street"]
 st.set_page_config(page_title="Scene Classifier", page_icon="🏞️", layout="centered")
 
 
-def download_model(url: str, path: str):
-    """Downloads the model file once (skipped if it already exists on disk from a
-    previous run in this same container)."""
-    if os.path.exists(path):
+def download_model(url: str, path: str, min_valid_size: int = 1_000_000):
+    """Downloads the model file, skipping only if a file already on disk looks like a
+    real model (not a leftover empty/corrupt file from an earlier deploy attempt)."""
+    if os.path.exists(path) and os.path.getsize(path) >= min_valid_size:
         return
     with st.spinner("Downloading model (first run only)..."):
         response = requests.get(url, stream=True)
@@ -44,6 +44,12 @@ def download_model(url: str, path: str):
         with open(path, "wb") as f:
             for chunk in response.iter_content(chunk_size=8192):
                 f.write(chunk)
+    if os.path.getsize(path) < min_valid_size:
+        raise RuntimeError(
+            f"Downloaded file is only {os.path.getsize(path)} bytes — the URL likely "
+            f"returned an error page instead of the model file. Check that MODEL_URL "
+            f"is a direct download link."
+        )
 
 
 @st.cache_resource
@@ -95,7 +101,7 @@ if uploaded_file is not None:
 
     col1, col2 = st.columns(2)
     with col1:
-        st.image(image, caption="Uploaded image", use_container_width=True)
+        st.image(image, caption="Uploaded image", use_column_width=True)
 
     with st.spinner("Classifying..."):
         result = predict(image, model)
